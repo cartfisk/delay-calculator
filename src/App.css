@@ -31,3 +31,7 @@
     transform: rotate(360deg);
   }
 }
+
+.tempo-form {
+  height: 10vh;
+}
