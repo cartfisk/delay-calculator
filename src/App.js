@@ -44,27 +44,31 @@ function TempoForm({ tempo, onTempoChange }) {
 TempoForm.propTypes = tempoFormProTypes;
 /* ------ END TEMPO INPUT FORM ------ */
 
-const Table = ({ heading, data, formatter }) => (
-  <table>
-    <tbody>
-      <tr>
-        <th colSpan="2" key={heading}>
-          {heading}
-        </th>
-      </tr>
-        {Object.entries(data).map(([division, value]) => (
-          <tr key={heading + division + "row"}>
-            <td key={heading + division}>
-              1/{division}:
-            </td>
-            <td key={value}>
-              {formatter(value)} ms
-            </td>
-          </tr>
-    ))}
-    </tbody>
-  </table>
-)
+
+const Table = ({ heading, data, formatter, clickHandler }) => {
+
+  return (
+    <table>
+      <tbody>
+        <tr>
+          <th colSpan="2" key={heading}>
+            {heading}
+          </th>
+        </tr>
+          {Object.entries(data).map(([division, value]) => (
+            <tr key={heading + division + "row"}>
+              <td key={heading + division}>
+                1/{division}:
+              </td>
+              <td key={value}>
+                <span onClick={clickHandler} className="clickable">{formatter(value)}</span> ms
+              </td>
+            </tr>
+      ))}
+      </tbody>
+    </table>
+  )
+};
 
 /* ------ START DISPLAY TABLE COMPONENT ------ */
 const divisionShape = DIVISIONS_LIST.reduce((map, d) => (map.set(d, PropTypes.number)), emptyMap).toJS();
@@ -77,6 +81,16 @@ const timeTablePropTypes = {
 };
 
 function TimeTable({ timeTable, columns, formatter }) {
+
+  const copyToClipboard = ({ target: { innerHTML } }) => {
+    const textField = document.createElement('textarea');
+    textField.innerText = innerHTML;
+    document.body.appendChild(textField)
+    textField.select()
+    document.execCommand('copy')
+    textField.remove()
+  };
+
   return (
     <div className="timeTable">
       {Object.entries(timeTable).map(([id, data]) => (
@@ -85,6 +99,7 @@ function TimeTable({ timeTable, columns, formatter }) {
           heading={columns[id].text}
           data={data}
           formatter={formatter}
+          clickHandler={copyToClipboard}
         />
       ))}
     </div>
