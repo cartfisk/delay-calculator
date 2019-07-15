@@ -1,15 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
 
 const emptyMap = new Immutable.Map();
 
 // amount of milliseconds in one minute (60,000)
 const MINUTE_MILLISECONDS = 60 * 1000;
+// amount of decimal places to round formatted values to
+const FORMAT_PLACES = 4;
 // fractional beat divisions
 const DIVISIONS_LIST = [1, 2, 4, 8, 16, 32, 64, 128];
+// definition of beat types as columns
+const COLUMNS = {
+  note: {text: 'BEATS', factor: 1},
+  triplet: {text: 'TRIPLETS', factor: 2 / 3 },
+  dotted: {text: 'DOTTED', factor: 3 / 2},
+}
 
 /* ------ START TEMPO INPUT FORM ------ */
 const tempoFormProTypes = {
@@ -21,6 +28,9 @@ function TempoForm({ tempo, onTempoChange }) {
   return (
     <div className="tempo-form">
       <form>
+        <label>
+          TEMPO:
+        </label>
         <input
           type="number"
           value={tempo}
@@ -33,31 +43,24 @@ function TempoForm({ tempo, onTempoChange }) {
 TempoForm.propTypes = tempoFormProTypes;
 /* ------ END TEMPO INPUT FORM ------ */
 
-const TableRow = ({ row, formatter }) => (
-  <tr>
-    <td key={row[0]}>{formatter(row[0])}</td>
-    <td key={row[1]}>{formatter(row[1])}</td>
-    <td key={row[2]}>{formatter(row[2])}</td>
-  </tr>
-)
-
-const Table = ({ headings, data, formatter }) => (
+const Table = ({ heading, data, formatter }) => (
   <table>
     <tbody>
       <tr>
-        {headings.map(heading => (
-          <th key={heading}>
-            {heading}
-          </th>
-        ))}
+        <th colSpan="2" key={heading}>
+          {heading}
+        </th>
       </tr>
-      {data.map(row => (
-        <TableRow
-          key={row[1]}
-          row={row}
-          formatter={formatter}
-        />
-      ))}
+        {Object.entries(data).map(([division, value]) => (
+          <tr key={heading + division + "row"}>
+            <td key={heading + division}>
+              1/{division}:
+            </td>
+            <td key={value}>
+              {formatter(value)} ms
+            </td>
+          </tr>
+    ))}
     </tbody>
   </table>
 )
@@ -73,17 +76,16 @@ const timeTablePropTypes = {
 };
 
 function TimeTable({ timeTable, columns, formatter }) {
-  const tableData = DIVISIONS_LIST.reduce((rows, division, index) => {
-    rows[index] = columns.map(c => timeTable[c][division]);
-    return rows;
-  }, [])
   return (
     <div className="timeTable">
-      <Table
-        headings={['Notes', 'Dotted', 'Triplets']}
-        data={tableData}
-        formatter={formatter}
-      />
+      {Object.entries(timeTable).map(([id, data]) => (
+        <Table
+          key={columns[id].text}
+          heading={columns[id].text}
+          data={data}
+          formatter={formatter}
+        />
+      ))}
     </div>
   );
 }
@@ -101,17 +103,21 @@ class Calculator extends React.Component {
     this.handleTempoChange = this.handleTempoChange.bind(this);
   }
 
+  // number of decimal places to round values to
+  static formatPlaces = FORMAT_PLACES;
+  static columns = COLUMNS;
+
   handleTempoChange(event) {
     this.setState({ tempo: Number(event.target.value) });
   }
 
   calculateTable(tempo) {
     // beat types and their corresponding multiplier constants
-    const types = new Immutable.Map({
-      triplet: 2 / 3,
-      note: 1,
-      dotted: 3 / 2,
-    });
+    const types = Object.entries(Calculator.columns)
+      .reduce((map, [id, { factor }]) => (
+        map.set(id, factor)), emptyMap
+      )
+
 
     // map of beat types to divisions
     const beats = types.reduce((map, divisor, type) => (map.set(type, DIVISIONS_LIST)), emptyMap);
@@ -130,12 +136,12 @@ class Calculator extends React.Component {
   };
 
   formatter(value) {
-    console.log(value);
-    return value.toFixed(4);
+    return value.toFixed(Calculator.formatPlaces);
   }
 
   render() {
     const timeTable = this.calculateTable(this.state.tempo);
+
     return (
       <div className="calculator">
         <TempoForm
@@ -144,7 +150,7 @@ class Calculator extends React.Component {
         />
         <TimeTable
           timeTable={timeTable}
-          columns={['note', 'dotted', 'triplet']}
+          columns={Calculator.columns}
           formatter={this.formatter}
         />
       </div>
@@ -153,15 +159,28 @@ class Calculator extends React.Component {
 }
 /* ------ END CALCULATOR ------ */
 
+function Record() {
+  return (
+    <span className="emoji" role="img" aria-label="gold-record">📀</span>
+  )
+}
+
 function DelayCalculator() {
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="delay-calc">
+      <header className="header">
         <h1>
-          Delay Calculator
+          <div className="grid">
+            <Record />
+            <span className="text">DELAY</span>
+            <Record />
+            <span className="text calc">CALCULATOR</span>
+          </div>
         </h1>
-        <Calculator />
       </header>
+      <div className="body">
+        <Calculator />
+      </div>
     </div>
   );
 }
