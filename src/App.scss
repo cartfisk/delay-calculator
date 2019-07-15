@@ -19,7 +19,7 @@
     flex-direction: column;
     align-self: center;
     max-width: 650px;
-    padding-top: 3vh;
+    padding-top: 1.5vh;
     font-weight: 800;
 
     h1 {
@@ -47,7 +47,8 @@
         justify-content: center;
       }
       img {
-        max-height: 120px;
+        // padding: 10px;
+        max-height: 90px;
       }
     }
 
@@ -95,7 +96,7 @@
 
       .timeTable {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 300px));
+        grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
         grid-gap: 10vmin;
         justify-content: center;
 
