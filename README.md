@@ -8,3 +8,5 @@ Planned future work includes:
   - ~~copy value to clipboard on click~~
   - add `<value + n bar(s)>` tables
   - compile into electron app for offline access
+
+![delay-calculator Screenshot](screenshot.png "delay-calculator Screenshot")
