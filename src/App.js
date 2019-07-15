@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import './App.scss';
+import record from './img/gold-record.png';
 
 const emptyMap = new Immutable.Map();
 
@@ -161,7 +162,7 @@ class Calculator extends React.Component {
 
 function Record() {
   return (
-    <span className="emoji" role="img" aria-label="gold-record">📀</span>
+    <img className="record" src={record} alt="gold record"></img>
   )
 }
 
