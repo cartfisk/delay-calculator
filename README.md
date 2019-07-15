@@ -9,4 +9,4 @@ Planned future work includes:
   - add `<value + n bar(s)>` tables
   - compile into electron app for offline access
 
-![delay-calculator Screenshot](screenshot.png "delay-calculator Screenshot")
+[![delay-calculator Screenshot](screenshot.png "delay-calculator Screenshot")](https://cartfisk.com/delay-calculator)
