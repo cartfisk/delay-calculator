@@ -1,4 +1,4 @@
-# [delay-calculator](https://cartfisk.com/delay-calculator)
+# [delay-calculator](https://cartfisk.github.io/delay-calculator/)
 
 ## A simple react app to calculate millisecond values for beat divisions by BPM.
 
